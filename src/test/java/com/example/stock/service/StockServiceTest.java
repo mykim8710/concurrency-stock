@@ -48,8 +48,8 @@ class StockServiceTest {
     }
 
     @Test
-    @DisplayName("[실패] 동시에 100개의 요청이 들어올때 재고감소 테스트")
-    void 재고감소_동시100개요청_실패_테스트() throws Exception {
+    @DisplayName("동시에 100개의 요청이 들어올때 재고감소 테스트")
+    void 재고감소_동시100개요청_테스트() throws Exception {
         // given
         int threadCount = 100;
 
