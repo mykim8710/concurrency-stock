@@ -6,7 +6,7 @@ logging:
     org.hibernate.type.descriptor.sql: trace
 
 server:
-  port: 9090
+  port: 9091
 
 spring:
   profiles:
