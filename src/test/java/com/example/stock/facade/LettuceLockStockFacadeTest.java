@@ -1,11 +1,8 @@
-package com.example.stock.service;
+package com.example.stock.facade;
 
 import com.example.stock.domain.Stock;
-import com.example.stock.facade.OptimisticLockStockFacade;
 import com.example.stock.repository.StockRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.hibernate.annotations.OptimisticLock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +13,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Slf4j
 @SpringBootTest
-class OptimisticLockStockFacadeTest {
+class LettuceLockStockFacadeTest {
     @Autowired
-    private OptimisticLockStockFacade optimisticLockStockFacade;
+    private LettuceLockStockFacade lettuceLockStockFacade;
 
     @Autowired
     private StockRepository stockRepository;
@@ -28,13 +24,13 @@ class OptimisticLockStockFacadeTest {
     @BeforeEach
     public void saveStock() {
         stockRepository.saveAndFlush(Stock.builder()
-                                                    .itemId(1L)
-                                                    .quantity(100L)
-                                                    .build());
+                .itemId(1L)
+                .quantity(100L)
+                .build());
     }
 
     @Test
-    @DisplayName("동시에 100개의 요청이 들어올때 재고감소 테스트 : Optimistic Lock 활용")
+    @DisplayName("동시에 100개의 요청이 들어올때 재고감소 테스트 : Named Lock 활용")
     void 재고감소_동시100개요청_테스트() throws Exception {
         // given
         int threadCount = 100;
@@ -49,7 +45,7 @@ class OptimisticLockStockFacadeTest {
         for(int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    optimisticLockStockFacade.decreaseStock(1L, 1L);
+                    lettuceLockStockFacade.decreaseStock(1L, 1L);
                 }catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -64,5 +60,4 @@ class OptimisticLockStockFacadeTest {
         Stock findStock = stockRepository.findById(1L).get();
         Assertions.assertThat(findStock.getQuantity()).isEqualTo(0);
     }
-
 }
